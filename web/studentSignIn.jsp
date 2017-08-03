@@ -54,13 +54,13 @@
 <tr>
 <td>Branch::</td>
 <td><select name="branch">
-<option value="cs">Computer Science</option>
+<option value="cse">Computer Science</option>
 <option value="it">Information Technology</option>
-<option value="ec">Electronics</option>
+<option value="ece">Electronics</option>
 <option value="eee">Electrical</option>
-<option value="mechanical">Mechanical</option>
-<option value="civil">Civil</option>
-<option value="production">Production</option>
+<option value="mec">Mechanical</option>
+<option value="civ">Civil</option>
+<option value="pie">Production</option>
 </select>
 </td>
 </tr>

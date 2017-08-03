@@ -12,7 +12,7 @@
  <jsp:include page="header.jsp"></jsp:include>
 <h3>Test code::${sessionScope.testCode}</h3>
 ${success}
- <h2>Question No.</h2>
+ <h2>Question</h2>
  <form method="post">
      <table>
              <tr>

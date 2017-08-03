@@ -9,6 +9,8 @@ import dao.TestDao;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.sql.Connection;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
@@ -18,6 +20,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import models.Question;
+import models.Student;
+import models.Test;
 
 /**
  *
@@ -51,16 +55,41 @@ public class StartTest extends HttpServlet {
             Connection con = (Connection)getServletContext().getAttribute("con");
             TestDao tdao = new TestDao(con);
             ArrayList<Question> questionList= tdao.getQuestions(testId);
-            System.out.println(questionList);
-            out.println(testId);
             HttpSession session=request.getSession(false);
             session.setAttribute("questionList",questionList);
-            
+            Test testDetail=tdao.getActiveTestDetail(testId);
             int answerList[]= new int[questionList.size()];
             session.setAttribute("answerList", answerList);
+            session.setAttribute("testDetail", testDetail);
             
+            //Converting endDate into string for counter
+ 
+       
+           
+           String eTime = String.valueOf(testDetail.getSchDate());
+           eTime=eTime.concat(" ");
+           eTime=eTime.concat(String.valueOf(testDetail.getEndTime()));
+           try{
+           DateFormat inputFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+           DateFormat outputFormat = new SimpleDateFormat("MM/dd/yyyy KK:mm a");
+           eTime=String.valueOf(outputFormat.format(inputFormat.parse(eTime)));
+           session.setAttribute("eTime",eTime);
+           }
+           catch(Exception e)
+           {
+               System.out.println("exception in counter");
+           }
+            Student s=(Student)session.getAttribute("user");
+            int valid=tdao.checkValidity(s.getsId(),testId);
+            if(valid>0){
+                RequestDispatcher rd=request.getRequestDispatcher("endTest");
+                rd.forward(request, response);
+            }
+            else
+            {    
             RequestDispatcher rd=request.getRequestDispatcher("facultyViews/question.jsp?quesInd=0");
             rd.forward(request, response);
+            }
             out.println("</body>");
             out.println("</html>");
         }

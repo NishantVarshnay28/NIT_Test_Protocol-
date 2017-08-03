@@ -14,6 +14,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import models.Question;
+import models.Test;
 
 /**
  *
@@ -115,24 +116,12 @@ public class TestDao {
       return testCode;
    } 
    
- 
-   /*
-   
-   Test -> no of questions,totalMarks
-   TestQuestion->testid,qid
-   Question->
-   facultyTest -> tid,testId;
-   */
-   
-   
    public boolean saveQuestions(ArrayList<Question> qList, String testCode,int teacherId){
        System.out.println("Test Code"+testCode);
        int nq= qList.size();
-       System.out.println("No of Questions: "+nq);
        int totalMarks=0;
        for(Question q: qList)
         totalMarks+= q.getWeightage();
-       System.out.println("Total marks: "+totalMarks);
        int testId;
        try{
            PreparedStatement stmt = con.prepareStatement("select testId from test where testCode =?");
@@ -163,12 +152,11 @@ public class TestDao {
                        stmt.setInt(7,ques.getWeightage());
                        
                         success= stmt.executeUpdate();
-                         System.out.println("Questiton Add:  "+ success);
                        
                        stmt = con.prepareStatement("insert into questiontest values(last_insert_id(),?) ");
                        stmt.setInt(1, testId);
                        success= stmt.executeUpdate();
-                       System.out.println("QuestionTest Add :"+ success);
+
                        
                    }
                }
@@ -204,4 +192,65 @@ public class TestDao {
        }
        return null;
    }
+   public Test getActiveTestDetail(int testId)
+   {
+      try
+      {
+          PreparedStatement ps=con.prepareStatement("select * from test where testId=?");
+          ps.setInt(1, testId);
+          ResultSet rs=ps.executeQuery();
+          if(rs.next())
+              return new Test(rs.getInt(1),rs.getString(2),rs.getString(3),rs.getInt(4),rs.getInt(5),rs.getDate(7),rs.getTime(8),rs.getTime(9));
+      }
+      catch(Exception e)
+      {
+          System.out.println("Error in getting testDetails"+e);
+      }
+      return null;   
+   }
+   public int getMarks( int a[],int testId,int sId)
+   {
+       int i=0,marks=0;
+       try{
+           PreparedStatement ps = con.prepareStatement(" select answer,weightage from questions where qId in (select qId from questiontest where testId=?)");
+           ps.setInt(1,testId);
+           ResultSet rs=ps.executeQuery();
+           while(rs.next())
+           {
+               if(rs.getInt(1)==a[i++])
+               {
+                   marks+=rs.getInt(2);
+               }
+           }
+           ps=con.prepareStatement("insert into studentTest values(?,?,?)");
+            ps.setInt(1,sId);
+            ps.setInt(2,testId);
+            ps.setInt(3,marks);
+            int res=ps.executeUpdate();
+            if(res>0)
+                return marks;
+       }
+       catch(Exception e)
+       {
+           System.out.println("Exception in gettin marks "+e);
+       }
+       return -1;
+   }
+    public int checkValidity(int sId ,int testId)
+    {
+        try
+        {
+          PreparedStatement ps=con.prepareStatement("select * from studentTest where testId=? and sId=?");
+          ps.setInt(1, testId);
+          ps.setInt(2, sId);
+          ResultSet rs=ps.executeQuery();
+          if(rs.next())
+              return 1;
+         }
+          catch(Exception e)
+         {
+          System.out.println("Error in getting validation "+e);
+        }
+        return -1;
+    }
   }

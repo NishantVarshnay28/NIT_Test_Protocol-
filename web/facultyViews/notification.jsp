@@ -64,20 +64,16 @@
                     <%
                     java.util.Date d = new java.util.Date();
                     java.sql.Date sqlDate = new java.sql.Date(d.getTime());
-                    //out.println(sqlDate);
                     java.sql.Time sqlTime = new java.sql.Time(d.getTime());
                     session.setAttribute("sqlDate",sqlDate);
                     session.setAttribute("sqlTime",sqlTime);
-                    //out.println(sqlTime);
-
                     %>
                     
                     <c:set var="startDate" value="${String.valueOf(test.schDate)}"></c:set>
                     <c:set var="startTime" value="${String.valueOf(test.schTime)}"></c:set>
                     <c:set var="endTime" value="${String.valueOf(test.endTime)}"></c:set>
                     <c:if test="${startDate eq sqlDate && startTime le sqlTime && endTime ge sqlTime }">
-                    <a href="/SMS/startTest?testId=${test.testId}"> Start</a>
-                    ${sqlDate}
+                    <a href="/SMS/startTest?testId=${test.testId}" style="background-color: #5e5e5e ;color :white;padding: 5px 25px;text-align: center;text-decoration: none;display: inline-block;"> Start</a>
                     </c:if>
                 </td>
             </tr>

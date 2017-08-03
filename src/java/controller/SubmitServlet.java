@@ -40,6 +40,7 @@ public class SubmitServlet extends HttpServlet {
         response.setContentType("text/html;charset=UTF-8");
         try (PrintWriter out = response.getWriter()) {
             /* TODO output your page here. You may use following sample code. */
+            out.println("<meta http-equiv=\"refresh\" content=\"3;url=http://localhost:8084/SMS/facultyViews/facultyProfile.jsp\" />");
             out.println("<!DOCTYPE html>");
             out.println("<html>");
             out.println("<head>");
@@ -55,7 +56,6 @@ public class SubmitServlet extends HttpServlet {
             s[4]=request.getParameter("option4");
             s[5]=request.getParameter("answer");
             s[6]=request.getParameter("weightage");
-            out.println(s[0]);
             Question q=new Question(s[0],s[1],s[2],s[3],s[4],Integer.parseInt(s[5]),Integer.parseInt(s[6]));
             ArrayList<Question> a=( ArrayList<Question>)session.getAttribute("qlist");
             a.add(q);
@@ -67,7 +67,8 @@ public class SubmitServlet extends HttpServlet {
             TestDao dao = new TestDao(con);
             boolean outcome= dao.saveQuestions(a,testCode,teacherId);
             if(outcome){
-                System.out.println("Successfully saved all questions");
+                out.println("<h3>Successfully saved all questions</h3>");
+                out.println("redirecting in 3 sec.....");
             }
             else{
                 System.out.println("Problem Problem...");
